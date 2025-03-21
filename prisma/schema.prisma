@@ -1,0 +1,110 @@
+datasource db {
+  provider     = "postgres"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              BigInt   @id
+  email           String   @unique
+  username        String?  @unique
+  flags           Int      @default(value: 0)
+  //first_name      String
+  //last_name       String
+  password        String?
+  onboarding_code String?
+  updated_at      DateTime @updatedAt
+
+  decks   Deck[]
+  folders Folder[]
+  votes   Vote[]
+  notes   Note[]
+}
+
+model BlacklistedToken {
+  id      BigInt   @id @default(autoincrement())
+  token   String   @unique
+  expires DateTime
+}
+
+model Folder {
+  id         BigInt   @id
+  name       String
+  user       User     @relation(fields: [user_id], references: [id])
+  user_id    BigInt
+  updated_at DateTime @updatedAt
+
+  decks Deck[]
+
+  @@index([user_id])
+}
+
+model Deck {
+  id          BigInt   @id
+  name        String
+  topic       String
+  visibility  String
+  description String
+  score       Int      @default(value: 0)
+  user        User     @relation(fields: [user_id], references: [id])
+  user_id     BigInt
+  folder      Folder?  @relation(fields: [folder_id], references: [id])
+  folder_id   BigInt?
+  updated_at  DateTime @updatedAt
+
+  cards Card[]
+  tags  Tag[]
+  votes Vote[]
+
+  @@index([user_id])
+  @@index([folder_id])
+}
+
+model Card {
+  id         BigInt   @id
+  front      String
+  back       String
+  deck       Deck     @relation(fields: [deck_id], references: [id], onDelete: Cascade)
+  deck_id    BigInt
+  updated_at DateTime @updatedAt
+
+  notes Note[]
+
+  @@index([deck_id])
+}
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  decks Deck[]
+}
+
+model Vote {
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    BigInt
+  deck       Deck     @relation(fields: [deck_id], references: [id], onDelete: Cascade)
+  deck_id    BigInt
+  score      Int
+  updated_at DateTime @updatedAt
+
+  @@id(name: "id", [user_id, deck_id])
+  @@index([user_id])
+  @@index([deck_id])
+}
+
+model Note {
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id BigInt
+  card    Card   @relation(fields: [card_id], references: [id], onDelete: Cascade)
+  card_id BigInt
+  content String
+
+  @@id(name: "id", [user_id, card_id])
+  @@index([user_id])
+  @@index([card_id])
+}
