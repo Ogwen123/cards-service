@@ -1,6 +1,13 @@
 # cards-service
 
 ## TODO
+### Database Stuff
+ - [ ] folder table
+ - [ ] deck table
+ - [ ] card table
+ - [ ] tag table
+ - [ ] vote table
+ - [ ] note table
 ### Routes
  - [ ] users/@me/decks
  - [ ] decks POST for creating a deck
