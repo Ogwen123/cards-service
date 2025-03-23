@@ -1,26 +1,13 @@
 import Joi from "joi"
 import express from "express"
-import { validate } from "../../utils/utils"
-import { error, success } from "../../utils/api"
-import { verifyToken } from "../../utils/token"
-import type { TokenData } from "../../global/types"
-import { prisma } from "../../utils/db"
-
-const SCHEMA = Joi.object({
-    id: Joi.string().required()
-})
+import { validate } from "../../../utils/utils"
+import { error, success } from "../../../utils/api"
+import { verifyToken } from "../../../utils/token"
+import type { TokenData } from "../../../global/types"
+import { prisma } from "../../../utils/db"
 
 export default async (req: express.Request, res: express.Response) => {
-    // validate the request body
-    const valid = validate(SCHEMA, req.body || {})
-
-    if (valid.error) {
-        error(res, 400, valid.data)
-        return
-    }
-
-    const data = valid.data
-
+    // validate token
     const token = req.get("Authorization")?.split(" ")[1]
 
     if (token === undefined) {
@@ -47,7 +34,6 @@ export default async (req: express.Request, res: express.Response) => {
         error(res, 404, `User data not found for ${validToken.id}`)
         return
     }
-
     success(res, {
         id: userData.id,
         username: userData.username,
@@ -55,5 +41,7 @@ export default async (req: express.Request, res: express.Response) => {
         email: userData.email,
         perm_flag: userData.perm_flag,
         created_at: userData.created_at
-    })
+    },
+        "Successfully fetched user data."
+    )
 }

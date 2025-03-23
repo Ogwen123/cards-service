@@ -2,6 +2,10 @@
   "name": "cards-service",
   "module": "src/index.ts",
   "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "prod": "bunx prisma generate && bun run index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
@@ -12,6 +16,7 @@
     "@prisma/client": "^6.5.0",
     "@types/express": "^5.0.1",
     "@types/joi": "^17.2.3",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "joi": "^17.13.3",
     "prisma": "^6.5.0"
