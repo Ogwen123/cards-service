@@ -1,6 +1,4 @@
-import Joi from "joi"
 import express from "express"
-import { validate } from "../../../utils/utils"
 import { error, success } from "../../../utils/api"
 import { verifyToken } from "../../../utils/token"
 import type { TokenData } from "../../../global/types"
@@ -24,24 +22,11 @@ export default async (req: express.Request, res: express.Response) => {
 
     const validToken: TokenData = tokenRes.data
 
-    const userData = await prisma.users.findUnique({
+    const decks = await prisma.decks.findMany({
         where: {
-            id: validToken.id
+            creator: validToken.id
         }
     })
 
-    if (userData === null) {
-        error(res, 404, `User data not found for ${validToken.id}`)
-        return
-    }
-    success(res, {
-        id: userData.id,
-        username: userData.username,
-        name: userData.name,
-        email: userData.email,
-        perm_flag: userData.perm_flag,
-        created_at: userData.created_at
-    },
-        "Successfully fetched user data."
-    )
+    success(res, decks, "Successfully fetched user decks.")
 }

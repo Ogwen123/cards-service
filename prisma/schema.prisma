@@ -105,6 +105,7 @@ model card {
   created_at String @db.VarChar
   updated_at String @db.VarChar
   decks      decks  @relation(fields: [deck], references: [id], onDelete: Cascade, map: "card_decks_id_fk")
+  note       note[] @relation("note_cardTocard")
 }
 
 model deck_folder {
@@ -134,10 +135,11 @@ model decks {
 }
 
 model note {
-  user       String  @db.VarChar
-  card       String  @db.VarChar
-  content    String  @db.VarChar
-  updated_at String? @db.VarChar
+  user                 String  @db.VarChar
+  card                 String  @db.VarChar
+  content              String  @db.VarChar
+  updated_at           String? @db.VarChar
+  card_note_cardTocard card    @relation("note_cardTocard", fields: [card], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "note___fk")
 
   @@id([user, card], map: "note_pk")
 }
