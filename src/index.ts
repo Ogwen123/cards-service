@@ -74,6 +74,8 @@ app.get("/api/users/@me/decks", (req, res) => {
     meDecks(req, res)
 })
 
+app.get("")
+
 app.listen(port, () => {
     console.log(`cards service loaded, ${port}`)
 })
