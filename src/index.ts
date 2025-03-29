@@ -5,7 +5,9 @@ import bodyParser from "body-parser"
 import { prisma } from "./utils/db"
 import { error } from "./utils/api"
 
-import meDecks from "./routes/users/@me/decks"
+import meDecks from "./routes/users/@me/decks/get"
+import userDecks from "./routes/users/#id/decks/get"
+import postDeck from "./routes/decks/post"
 
 //@ts-ignore
 BigInt.prototype.toJSON = function () { return this.toString() }
@@ -74,7 +76,13 @@ app.get("/api/users/@me/decks", (req, res) => {
     meDecks(req, res)
 })
 
-app.get("")
+app.get("/api/users/:id/decks", (req, res) => {
+    userDecks(req, res)
+})
+
+app.post("/api/decks", (req, res) => {
+    postDeck(req, res)
+})
 
 app.listen(port, () => {
     console.log(`cards service loaded, ${port}`)

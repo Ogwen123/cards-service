@@ -66,11 +66,13 @@ export default async (req: express.Request, res: express.Response) => {
             id: uuidv4(),
             front: cardData.front,
             back: cardData.back,
+            updated_at: iso(),
             ...(cardData.note ? {
                 notes: {
                     create: {
                         user: validToken.id,
                         content: cardData.note,
+                        updated_at: iso()
                     }
                 }
             } : {})

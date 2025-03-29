@@ -102,7 +102,6 @@ model card {
   front      String @db.VarChar
   back       String @db.VarChar
   deck       String @db.VarChar
-  created_at String @db.VarChar
   updated_at String @db.VarChar
   decks      decks  @relation(fields: [deck], references: [id], onDelete: Cascade, map: "card_decks_id_fk")
   note       note[] @relation("note_cardTocard")

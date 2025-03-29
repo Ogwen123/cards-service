@@ -1,8 +1,8 @@
 import express from "express"
-import { error, success } from "../../../utils/api"
-import { verifyToken } from "../../../utils/token"
-import type { TokenData } from "../../../global/types"
-import { prisma } from "../../../utils/db"
+import { error, success } from "../../../../utils/api"
+import { verifyToken } from "../../../../utils/token"
+import type { TokenData } from "../../../../global/types"
+import { prisma } from "../../../../utils/db"
 
 export default async (req: express.Request, res: express.Response) => {
     // validate token
