@@ -97,16 +97,6 @@ model task_completions {
   tasks        tasks  @relation(fields: [task_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "task_completions_tasks_id_fk")
 }
 
-model card {
-  id         String @id(map: "card_pk") @db.VarChar
-  front      String @db.VarChar
-  back       String @db.VarChar
-  deck       String @db.VarChar
-  updated_at String @db.VarChar
-  decks      decks  @relation(fields: [deck], references: [id], onDelete: Cascade, map: "card_decks_id_fk")
-  note       note[] @relation("note_cardTocard")
-}
-
 model deck_folder {
   id         String       @id(map: "deck_folder_pk") @db.VarChar
   name       String?      @db.VarChar
@@ -127,20 +117,10 @@ model decks {
   creator     String       @db.VarChar
   created_at  String       @db.VarChar
   updated_at  String       @db.VarChar
-  card        card[]
+  cards       cards[]
   deck_saves  deck_saves[]
   users       users        @relation(fields: [creator], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "decks_users_id_fk")
   tags        tags[]
-}
-
-model note {
-  user                 String  @db.VarChar
-  card                 String  @db.VarChar
-  content              String  @db.VarChar
-  updated_at           String? @db.VarChar
-  card_note_cardTocard card    @relation("note_cardTocard", fields: [card], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "note___fk")
-
-  @@id([user, card], map: "note_pk")
 }
 
 model tags {
@@ -168,4 +148,24 @@ model deck_saves {
   deck_folder deck_folder @relation(fields: [folder], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "deck_saves___fk")
 
   @@id([deck, user, folder], map: "deck_saves_pk")
+}
+
+model cards {
+  id         String  @id(map: "card_pk") @db.VarChar
+  front      String  @db.VarChar
+  back       String  @db.VarChar
+  deck       String  @db.VarChar
+  updated_at String  @db.VarChar
+  decks      decks   @relation(fields: [deck], references: [id], onDelete: Cascade, map: "card_decks_id_fk")
+  notes      notes[]
+}
+
+model notes {
+  user       String  @db.VarChar
+  card       String  @db.VarChar
+  content    String  @db.VarChar
+  updated_at String? @db.VarChar
+  cards      cards   @relation(fields: [card], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "note___fk")
+
+  @@id([user, card], map: "note_pk")
 }

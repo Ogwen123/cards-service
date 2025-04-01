@@ -62,12 +62,10 @@ export default async (req: express.Request, res: express.Response) => {
     }
 
     const cards = data.cards.map((cardData: any) => {
-        return {
-            id: uuidv4(),
-            front: cardData.front,
-            back: cardData.back,
-            updated_at: iso(),
-            ...(cardData.note ? {
+        let note;
+
+        if (cardData.note) {
+            note = {
                 notes: {
                     create: {
                         user: validToken.id,
@@ -75,7 +73,24 @@ export default async (req: express.Request, res: express.Response) => {
                         updated_at: iso()
                     }
                 }
-            } : {})
+            }
+        } else {
+            note = {}
+        }
+
+        return {
+            id: uuidv4(),
+            front: cardData.front,
+            back: cardData.back,
+            updated_at: iso(),
+            notes: note
+        }
+    })
+
+    const tags = data.tags.map((tag: any) => {
+        return {
+            id: uuidv4(),
+            name: tag
         }
     })
 
@@ -88,16 +103,19 @@ export default async (req: express.Request, res: express.Response) => {
             visibility: data.visibility,
             description: data.description,
             score: 0,
-            card: {
+            cards: {
                 create: cards
+            },
+            tags: {
+                create: tags
             },
             created_at: iso(),
             updated_at: iso()
         },
         include: {
-            card: {
+            cards: {
                 include: {
-                    note: true,
+                    notes: true,
                 }
             },
             users: true,

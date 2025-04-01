@@ -8,6 +8,7 @@ import { error } from "./utils/api"
 import meDecks from "./routes/users/@me/decks/get"
 import userDecks from "./routes/users/#id/decks/get"
 import postDeck from "./routes/decks/post"
+import getDeck from "./routes/decks/#id/get"
 
 //@ts-ignore
 BigInt.prototype.toJSON = function () { return this.toString() }
@@ -82,6 +83,10 @@ app.get("/api/users/:id/decks", (req, res) => {
 
 app.post("/api/decks", (req, res) => {
     postDeck(req, res)
+})
+
+app.get("/api/decks/:id", (req, res) => {
+    getDeck(req, res)
 })
 
 app.listen(port, () => {
