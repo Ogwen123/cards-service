@@ -54,10 +54,6 @@ export default async (req: express.Request, res: express.Response) => {
         return
     }
 
-    let userData = deck.users as any
-    userData.perms = flagBFToPerms(deck.users.perm_flag!)
-    delete userData["perm_flag"]
-
     const formattedDeck = {
         id: deck.id,
         name: deck.name,
@@ -69,7 +65,12 @@ export default async (req: express.Request, res: express.Response) => {
         created_at: deck.created_at,
         updated_at: deck.updated_at,
         cards: deck.cards,
-        user: userData,
+        user: {
+            id: deck.users.id,
+            username: deck.users.username,
+            perms: flagBFToPerms(deck.users.perm_flag!),
+            created_at: deck.users.created_at
+        },
         tags: deck.tags
     }
 
