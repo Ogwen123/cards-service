@@ -10,6 +10,7 @@ import userDecks from "./routes/users/#id/decks/get"
 import postDeck from "./routes/decks/post"
 import getDeck from "./routes/decks/#id/get"
 import searchDecks from "./routes/decks/search/post"
+import updateCard from "./routes/cards/patch"
 
 //@ts-ignore
 BigInt.prototype.toJSON = function () { return this.toString() }
@@ -92,6 +93,10 @@ app.get("/api/decks/:id", (req, res) => {
 
 app.post("/api/decks/search", (req, res) => {
     searchDecks(req, res)
+})
+
+app.patch("/api/cards/:id", (req, res) => {
+    updateCard(req, res)
 })
 
 app.listen(port, () => {

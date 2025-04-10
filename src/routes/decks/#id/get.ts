@@ -30,17 +30,11 @@ export default async (req: express.Request, res: express.Response) => {
 
     const deck = await prisma.decks.findUnique({
         where: {
-            id: req.params.id
+            id: req.params.id,
         },
         include: {
-            cards: {
-                include: {
-                    notes: true
-                }
-            },
             users: true,
             tags: true
-
         }
     })
 
@@ -49,9 +43,46 @@ export default async (req: express.Request, res: express.Response) => {
         return
     }
 
-    if (!validToken || (deck?.creator !== validToken.id && deck?.visibility === "PRIVATE")) {
+    if ((!validToken || deck?.creator !== validToken.id) && deck?.visibility === "PRIVATE") {
         error(res, 404, "Deck not found")
         return
+    }
+
+    let cards;
+
+    if (validToken) {
+        const rawCards = await prisma.cards.findMany({
+            where: {
+                deck: deck.id
+            },
+            include: {
+                notes: {
+                    where: {
+                        user: validToken.id
+                    }
+                }
+            }
+        })
+        if (rawCards.length == 0) {
+            cards = {}
+        } else {
+            cards = rawCards.map((card) => {
+                return {
+                    id: card.id,
+                    updated_at: card.updated_at,
+                    front: card.front,
+                    back: card.back,
+                    ...(card.notes.length > 0 && { note: card.notes[0].content })
+                }
+            })
+        }
+
+    } else {
+        cards = await prisma.cards.findMany({
+            where: {
+                deck: deck.id
+            }
+        })
     }
 
     const formattedDeck = {
@@ -61,10 +92,9 @@ export default async (req: express.Request, res: express.Response) => {
         visibility: deck.visibility,
         description: deck.description,
         score: deck.score,
-        creator: deck.creator,
         created_at: deck.created_at,
         updated_at: deck.updated_at,
-        cards: deck.cards,
+        cards: cards,
         user: {
             id: deck.users.id,
             username: deck.users.username,
